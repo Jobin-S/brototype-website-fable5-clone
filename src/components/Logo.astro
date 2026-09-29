@@ -1,0 +1,10 @@
+---
+const { href = '/', class: className = '' } = Astro.props;
+---
+<a class={`logo ${className}`} href={href} aria-label="Brototype — home" data-cursor="link">
+  <span class="logo__box" aria-hidden="true">BRO</span>
+  <span class="logo__rest" aria-hidden="true">
+    <span>TOTYPE</span>
+    <span>THER</span>
+  </span>
+</a>

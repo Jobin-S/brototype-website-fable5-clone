@@ -1,0 +1,45 @@
+---
+import { stats } from '../data/site.js';
+---
+<div class="pre" data-pre aria-hidden="true">
+  <div class="pre__top mono">
+    <span>Brototype / Brocamp</span>
+    <span>09.97° N — 76.28° E</span>
+  </div>
+
+  <div class="pre__mid">
+    <div class="pre__word bw" data-pre-word>
+      <span class="bw__box" data-pre-box>BRO</span>
+      <span class="bw__rest pre__suffix">
+        <span data-pre-a>TOTYPE</span>
+        <span data-pre-b>THER</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="pre__bottom">
+    <p class="pre__warn mono"><b>Warning:</b> a bright future is loading</p>
+    <div class="pre__count">
+      <small>engineers placed</small>
+      <span data-pre-count data-to={stats.placed}>0000</span>
+    </div>
+  </div>
+
+  <div class="pre__bar"><i data-pre-bar></i></div>
+</div>
+
+<div class="curtain" data-curtain aria-hidden="true">
+  <div class="curtain__cols"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="curtain__label">
+    <span data-curtain-a>BRO</span>
+    <span data-curtain-b>THER</span>
+  </div>
+</div>
+
+<script is:inline>
+  // the curtain is already drawn when a page is reached through a link — give it the right word at once
+  (function () {
+    var b = document.querySelector('[data-curtain-b]');
+    if (b && document.body.dataset.suffix) b.textContent = document.body.dataset.suffix;
+  })();
+</script>

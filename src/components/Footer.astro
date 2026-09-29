@@ -1,0 +1,99 @@
+---
+import Button from './Button.astro';
+import { nav, contacts, hubs, socials, external, partners, brand } from '../data/site.js';
+const year = new Date().getFullYear();
+const { lead = 'Bro, let’s talk.' } = Astro.props;
+---
+<footer class="foot" data-theme="dark" data-nav-theme="dark">
+  <div class="wrap">
+    <div class="foot__top">
+      <div class="foot__lead">
+        <span class="label">Your move</span>
+        <h2 class="h3" data-reveal="lines">{lead}</h2>
+        <p class="body">
+          One call with a career expert. No pressure, no jargon — just a straight answer about whether
+          Brocamp is right for you.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:.75rem">
+          <Button href="/apply/" label="Apply for Brocamp" />
+          <Button href={contacts.whatsapp} label="WhatsApp us" variant="ghost" />
+        </div>
+      </div>
+
+      <div class="foot__cols">
+        <div class="foot__col">
+          <h3 class="mono">Explore</h3>
+          <ul>
+            {nav.map((n) => (
+              <li><a class="link link--quiet" href={n.href}>{n.label}</a></li>
+            ))}
+            <li><a class="link link--quiet" href="/apply/">Apply</a></li>
+          </ul>
+        </div>
+
+        <div class="foot__col">
+          <h3 class="mono">Admissions</h3>
+          <ul>
+            <li><a class="link link--quiet" href={`tel:${contacts.admissions.tel}`}>{contacts.admissions.phone}</a></li>
+            <li><a class="link link--quiet" href={`mailto:${contacts.admissions.email}`}>{contacts.admissions.email}</a></li>
+          </ul>
+          <h3 class="mono" style="margin-top:2rem">Hire from us</h3>
+          <ul>
+            <li><a class="link link--quiet" href={`tel:${contacts.placements.tel}`}>{contacts.placements.phone}</a></li>
+            <li><a class="link link--quiet" href={`mailto:${contacts.placements.email}`}>{contacts.placements.email}</a></li>
+          </ul>
+        </div>
+
+        <div class="foot__col">
+          <h3 class="mono">More</h3>
+          <ul>
+            <li><a class="link link--quiet" href={external.refer} target="_blank" rel="noopener">Refer &amp; earn</a></li>
+            <li><a class="link link--quiet" href={external.careers} target="_blank" rel="noopener">Careers at Brototype</a></li>
+            <li><a class="link link--quiet" href={`mailto:${contacts.official.email}`}>{contacts.official.email}</a></li>
+            <li><a class="link link--quiet" href={`mailto:${contacts.feedback.email}`}>{contacts.feedback.email}</a></li>
+            {socials.map((s) => (
+              <li><a class="link link--quiet" href={s.href} target="_blank" rel="noopener">{s.label}</a></li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="foot__col foot__col--wide">
+          <h3 class="mono">Hubs</h3>
+          <p>{hubs.map((h) => h.city).join(' · ')} · Online</p>
+        </div>
+
+        <div class="foot__col">
+          <h3 class="mono">Languages</h3>
+          <p><span class="ml">മലയാളം</span> · <a class="link link--quiet" href={external.tamil} target="_blank" rel="noopener"><span class="ml" lang="ta">தமிழ்</span></a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot__partners mono">
+      <span>Officially partnered with</span>
+      {partners.map((p) => <span class="tag">{p}</span>)}
+    </div>
+  </div>
+
+  <div class="foot__mark" aria-hidden="true" data-foot-mark>
+    <span class="foot__mark-box">BRO</span>
+    <span class="foot__mark-rest">
+      {'TOTYPE'.split('').map((c) => <span data-foot-char>{c}</span>)}
+    </span>
+  </div>
+
+  <div class="wrap">
+    <div class="foot__base mono">
+      <span>© {year} {brand.legal}</span>
+      <span class="foot__clock">Kochi <b data-clock>--:--:--</b> IST</span>
+      <ul>
+        <li><a href={external.privacy} target="_blank" rel="noopener">Privacy</a></li>
+        <li><a href={external.terms} target="_blank" rel="noopener">Terms</a></li>
+      </ul>
+      <a class="totop" href="#top" data-totop data-cursor="link">
+        Back to top
+        <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 11V1M1.5 5.5 6 1l4.5 4.5" stroke="currentColor" stroke-width="1.5" /></svg>
+      </a>
+    </div>
+  </div>
+</footer>

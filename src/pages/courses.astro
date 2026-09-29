@@ -1,0 +1,220 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Arrow from '../components/Arrow.astro';
+import Marquee from '../components/Marquee.astro';
+import SectionHead from '../components/SectionHead.astro';
+import '../styles/pages/inner.css';
+import '../styles/pages/courses.css';
+
+import { stats } from '../data/site.js';
+import { courses, families, placedStacks } from '../data/courses.js';
+
+const count = (f) => (f === 'All' ? courses.length : courses.filter((c) => c.family === f).length);
+const builders = courses.filter((c) => c.isNew);
+const deal = [
+  { k: 'Duration', v: '12 months', note: 'Two semesters, six phases.' },
+  { k: 'Curriculum', v: '52 modules', note: 'The same depth in every domain.' },
+  { k: 'AI', v: 'Integrated', note: 'Not an add-on. Part of how you build.' },
+  { k: 'Mode', v: 'In-house / online', note: 'Five hubs, or your own desk.' },
+  { k: 'Projects', v: '2 + 1 team', note: 'Two of your own, one with a team.' },
+  { k: 'Reviews', v: 'Every week', note: 'Evaluated by industry experts.' },
+  { k: 'Placement', v: 'Lifetime support', note: 'For your first job, and the next.' },
+  { k: 'Tuition', v: '₹0 upfront', note: 'With Pay After Placement. T&C apply.' },
+];
+const half = Math.ceil(placedStacks.length / 2);
+---
+
+<Base
+  title="Courses — 12 AI-integrated domains"
+  description="Full stack, mobile, AI/ML, data science, cyber security, game development, DevOps and more. Twelve domains, 52 modules each, all AI-integrated."
+  page="courses"
+  suffix="WSE"
+  scene="courses"
+  footLead="Not sure which domain? That is what the call is for."
+>
+  <!-- HERO -->
+  <section class="phero section--clear" data-theme="dark" data-stop="hero">
+    <div class="wrap">
+      <div class="phero__meta mono" data-phero-fade>
+        <span class="label">Courses</span>
+        <span>{stats.domains} domains · {stats.modules} modules each · all AI-integrated</span>
+      </div>
+
+      <h1 class="phero__title" style="--ts:15.5;--ts-m:20" aria-label="Browse twelve domains.">
+        <span class="phero__line" aria-hidden="true">
+          <span class="bw" data-pre-target data-pre-suffix="WSE">
+            <span class="bw__box">BRO</span><span class="bw__rest">WSE</span>
+          </span>
+        </span>
+        <span class="phero__line" aria-hidden="true">
+          <span class="phero__mask"><span data-phero-in>12</span></span>
+          <span class="phero__mask phero__mask--serif"><span class="serif accent" data-phero-in>domains.</span></span>
+        </span>
+      </h1>
+
+      <div class="phero__foot">
+        <p class="lead phero__lead" data-phero-fade>
+          Pick the thing you want to be brilliant at. Every domain runs the full twelve months, ends in a job hunt with
+          the placement team beside you, and can be paid for after you are placed.
+        </p>
+        <div class="phero__cta" data-phero-fade>
+          <Button href="#domains" label="See all domains" variant="ghost" size="lg" icon="s" />
+          <Button href="/apply/" label="Help me choose" size="lg" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRID -->
+  <section class="section cat" data-theme="paper" id="domains" data-catalog>
+    <div class="wrap">
+      <div class="cat__bar">
+        <div class="cat__filters" role="tablist" aria-label="Filter domains">
+          {families.map((f, i) => (
+            <button class={`cat__filter${i === 0 ? ' is-active' : ''}`} type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-filter={f} data-cursor="link">
+              <span>{f}</span><sup>{String(count(f)).padStart(2, '0')}</sup>
+            </button>
+          ))}
+        </div>
+        <p class="mono dim cat__count" aria-live="polite"><b data-cat-count>{courses.length}</b> of {courses.length} domains</p>
+      </div>
+
+      <div class="cat__grid" data-cat-grid>
+        {courses.map((c) => (
+          <article class="course card" id={c.id} data-course data-family={c.family} data-tilt="3">
+            <header class="course__top mono">
+              <span>{c.no} / {c.family}</span>
+              <span class="tag tag--ai">{c.isNew ? 'New · AI powered' : 'AI integrated'}</span>
+            </header>
+
+            <div class="course__glyph" aria-hidden="true"><span>{c.glyph}</span></div>
+
+            <div class="course__body">
+              <h2 class="course__name">{c.name}</h2>
+              <p class="course__pitch">{c.pitch}</p>
+            </div>
+
+            <dl class="course__facts">
+              {c.stacks.length > 0 && (
+                <div>
+                  <dt class="mono">Stacks</dt>
+                  <dd>{c.stacks.map((s) => <span class="tag">{s}</span>)}</dd>
+                </div>
+              )}
+              <div>
+                <dt class="mono">Leads to</dt>
+                <dd class="course__roles">{c.roles.join(' · ')}</dd>
+              </div>
+            </dl>
+
+            <footer class="course__foot">
+              <span class="mono dim">12 months · {stats.modules} modules</span>
+              <a class="course__cta mono" href="/apply/" data-cursor="link">
+                <span class="roll" data-text="Ask about this"><span>Ask about this</span></span>
+                <span class="course__arrow" aria-hidden="true"><Arrow /></span>
+              </a>
+            </footer>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTION BUILDERS -->
+  <section class="section section--clear sb" data-theme="dark" data-stop="builders">
+    <div class="wrap">
+      <header class="sb__head">
+        <span class="label"><span class="label__no">02</span> New for the AI era</span>
+        <h2 class="h1" data-reveal="lines">Not just developers.<br /><span class="serif accent">Solution builders.</span></h2>
+        <p class="lead" data-reveal="up">
+          In the AI era, coding alone is not enough. These two tracks teach you to solve real business problems using
+          development, AI and systems thinking — together.
+        </p>
+      </header>
+
+      <div class="tiles tiles--2">
+        {builders.map((c) => (
+          <a class="tile card sb__card" href={`#${c.id}`} data-reveal="up" data-tilt="4" data-cursor="view">
+            <header class="tile__top mono"><span>{c.no}</span><span class="tag tag--ai">AI powered</span></header>
+            <h3 class="sb__name">{c.short}</h3>
+            <div class="tile__body">
+              <p class="body">{c.line}</p>
+              <div class="sb__tags">{c.stacks.map((s) => <span class="tag">{s}</span>)}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- THE DEAL -->
+  <section class="section" data-theme="paper">
+    <div class="wrap split">
+      <div class="split__head">
+        <span class="label"><span class="label__no">03</span> Same deal, every domain</span>
+        <h2 class="h2" data-reveal="lines">Whatever you pick, you <span class="serif accent">get.</span></h2>
+        <p class="body" data-reveal="up">
+          The domain changes what you build. It does not change how seriously we take getting you hired.
+        </p>
+        <div data-reveal="up"><Button href="/brocamp/" label="How the program runs" variant="light" /></div>
+      </div>
+
+      <dl class="split__body kv deal">
+        {deal.map((d) => (
+          <div class="kv__row deal__row" data-reveal="up">
+            <dt class="kv__k">{d.k}</dt>
+            <dd class="kv__v">{d.v}<small>{d.note}</small></dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- STACKS -->
+  <section class="section stacks" data-theme="dark">
+    <div class="wrap">
+      <SectionHead no="04" label="In production" meta="Source: brototype.com/alumni">
+        <Fragment slot="title">Stacks our alumni get <span class="serif accent">paid</span> to use.</Fragment>
+      </SectionHead>
+    </div>
+    <div class="wall">
+      <Marquee speed={70}>
+        {placedStacks.slice(0, half).map((s) => <span class="mq__item wall__item"><span>{s}</span><i aria-hidden="true"></i></span>)}
+      </Marquee>
+      <Marquee speed={55} dir={1}>
+        {placedStacks.slice(half).map((s) => <span class="mq__item wall__item wall__item--ghost"><span>{s}</span><i aria-hidden="true"></i></span>)}
+      </Marquee>
+    </div>
+  </section>
+
+  <!-- UNDECIDED -->
+  <section class="section" data-theme="dark">
+    <div class="wrap state__grid">
+      <div class="state__label"><span class="label"><span class="label__no">05</span> Undecided?</span></div>
+      <p class="state__text" data-scrub-words>
+        You do not have to know yet. There are no one-size-fits-all classes here — explore the different areas of
+        programming, <em>find what you are passionate about,</em> then get after it.
+      </p>
+      <div class="state__aside">
+        <p class="body" data-reveal="up">
+          Tell a career expert where you are coming from and what you enjoy. They will tell you, honestly, which domains
+          fit — and which do not.
+        </p>
+        <div data-reveal="up"><Button href="/apply/" label="Talk to a career expert" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- END -->
+  <section class="section end" data-theme="red">
+    <div class="wrap end__grid">
+      <h2 class="end__title" data-reveal="chars">Pick one.<br />Go deep.</h2>
+      <p class="lead end__text" data-reveal="up">Twelve months from now, you could be getting paid to do it.</p>
+      <div class="end__cta" data-reveal="up">
+        <Button href="/apply/" label="Apply for Brocamp" variant="light" size="lg" />
+        <Button href="/placements/" label="See where it leads" variant="ghost" size="lg" />
+      </div>
+    </div>
+  </section>
+</Base>

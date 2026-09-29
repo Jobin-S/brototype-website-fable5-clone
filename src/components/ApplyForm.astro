@@ -1,0 +1,74 @@
+---
+import Button from './Button.astro';
+import { contacts } from '../data/site.js';
+/**
+ * Lead form. With no backend wired up it hands the conversation to WhatsApp,
+ * which is how Brototype's own site takes enquiries. See README → "Forms".
+ */
+const { id = 'apply', full = false } = Astro.props;
+const to = contacts.admissions.tel.replace(/\D/g, '');
+const status = ['Student', 'Fresher', 'Working', 'Career gap'];
+const domains = ['Web', 'Mobile', 'AI / ML', 'Data', 'Security', 'Games', 'Not sure yet'];
+const modes = ['In-house', 'Online', 'Not sure yet'];
+---
+<form class="form" data-form="whatsapp" data-to={to} novalidate>
+  <div class="field" data-rule="name">
+    <label class="field__label" for={`${id}-name`}>
+      <span>01 — Your name</span>
+      <span class="field__error" aria-live="polite"></span>
+    </label>
+    <div class="field__control">
+      <input id={`${id}-name`} name="name" type="text" autocomplete="name" placeholder="What do we call you?" required />
+    </div>
+  </div>
+
+  <fieldset class="field">
+    <legend class="field__label"><span>02 — What represents you best?</span></legend>
+    <div class="choices">
+      {status.map((s, i) => (
+        <label class="choice">
+          <input type="radio" name="status" value={s} checked={i === 0} />
+          <span>{s}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <fieldset class="field">
+    <legend class="field__label"><span>03 — What do you want to build?</span></legend>
+    <div class="choices">
+      {domains.map((s, i) => (
+        <label class="choice">
+          <input type="radio" name="domain" value={s} checked={i === domains.length - 1} />
+          <span>{s}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  {full && (
+    <fieldset class="field">
+      <legend class="field__label"><span>04 — How would you like to learn?</span></legend>
+      <div class="choices">
+        {modes.map((s, i) => (
+          <label class="choice">
+            <input type="radio" name="mode" value={s} checked={i === modes.length - 1} />
+            <span>{s}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  )}
+
+  <Button type="submit" label="Continue on WhatsApp" variant="light" size="lg" block magnetic={false} />
+
+  <p class="form__note">
+    This opens a WhatsApp chat with Brototype admissions, with your answers already typed in. Prefer a call?{' '}
+    <a href={`tel:${contacts.admissions.tel}`}>{contacts.admissions.phone}</a>{' · '}
+    <a href={`mailto:${contacts.admissions.email}`}>{contacts.admissions.email}</a>
+  </p>
+
+  <p class="form__done mono" data-form-done hidden>
+    <span class="dot"></span> WhatsApp is opening. If nothing happens, message us on {contacts.admissions.phone}.
+  </p>
+</form>

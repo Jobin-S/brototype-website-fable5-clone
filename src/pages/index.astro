@@ -1,0 +1,633 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Arrow from '../components/Arrow.astro';
+import Marquee from '../components/Marquee.astro';
+import SectionHead from '../components/SectionHead.astro';
+import ApplyForm from '../components/ApplyForm.astro';
+import '../styles/blocks.css';
+import '../styles/pages/home.css';
+
+import { stats, hubs, contacts, award, inr } from '../data/site.js';
+import { courses } from '../data/courses.js';
+import { alumni, stories, qualifications, placeNames, initials } from '../data/alumni.js';
+import { phases, principles } from '../data/program.js';
+
+const ticker = alumni.filter((a) => a.lpa).slice(0, 14);
+const rail = alumni.filter((a) => a.lpa).slice(0, 16);
+const nonItCount = Math.floor((stats.placed * stats.nonIt) / 100);
+const itCount = stats.placed - nonItCount;
+
+// cumulative month positions for the journey ruler
+let acc = 0;
+const timeline = phases.map((p) => {
+  const from = acc;
+  acc += p.months;
+  return { ...p, from, to: acc };
+});
+
+// hub constellation: real relative positions, projected into a 100 × 100 box
+const lats = hubs.map((h) => h.lat);
+const lons = hubs.map((h) => h.lon);
+const span = Math.max(Math.max(...lats) - Math.min(...lats), Math.max(...lons) - Math.min(...lons));
+const map = hubs.map((h) => ({
+  ...h,
+  px: 14 + ((h.lon - Math.min(...lons)) / span) * 72 + (72 - ((Math.max(...lons) - Math.min(...lons)) / span) * 72) / 2,
+  py: 14 + ((Math.max(...lats) - h.lat) / span) * 72,
+}));
+---
+
+<Base page="home" suffix="THER" scene="home">
+  <!-- ───────────────────────────── HERO ───────────────────────────── -->
+  <section class="hero section--clear" data-theme="dark" data-stop="hero">
+    <div class="wrap hero__inner">
+      <div class="hero__top mono" data-hero-fade>
+        <span class="hero__status"><span class="dot"></span>Applications open · In-house &amp; online</span>
+        <span class="hero__award">{award.by} — {award.title}</span>
+      </div>
+
+      <div class="hero__mid" aria-hidden="true"></div>
+
+      <h1 class="hero__title" aria-label="The brother you never had.">
+        <span class="hero__row" aria-hidden="true">
+          <span class="bw" data-pre-target data-hero-word>
+            <span class="bw__box">BRO</span><span class="bw__rest">THER</span>
+          </span>
+        </span>
+        <span class="hero__row hero__row--b" aria-hidden="true">
+          <span class="hero__mask"><span data-hero-line>YOU</span></span>
+          <span class="hero__mask hero__mask--serif"><span class="serif accent" data-hero-line>never</span></span>
+          <span class="hero__mask"><span data-hero-line>HAD.</span></span>
+        </span>
+      </h1>
+
+      <div class="hero__foot">
+        <p class="hero__lead lead" data-hero-fade>
+          No degree needed. No tuition upfront. Twelve relentless months that have turned{' '}
+          <strong>{inr(stats.placed)} people</strong>{' '}— most of them from outside IT — into software engineers.
+        </p>
+
+        <div class="hero__cta" data-hero-fade>
+          <Button href="/apply/" label="Apply for Brocamp" size="lg" />
+          <Button href="/pay-after-placement/" label="How PAP works" variant="ghost" size="lg" />
+        </div>
+
+        <ul class="hero__facts" data-hero-fade>
+          <li><b>{inr(stats.placed)}</b><span class="mono">placed</span></li>
+          <li><b>₹{inr(stats.avgMonthly)}</b><span class="mono">avg / month</span></li>
+          <li><b>{stats.highestLpa} LPA</b><span class="mono">highest</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pin" data-pin aria-hidden="true">
+      <i class="pin__line"></i>
+      <div class="pin__text mono">
+        <b>Kochi HQ</b>
+        <span>09.97° N · 76.28° E</span>
+        <span class="accent">→ placed in 100+ locations</span>
+      </div>
+    </div>
+
+    <div class="hero__ticker" data-hero-fade>
+      <Marquee speed={62} class="ticker" data-pause>
+        {ticker.map((a) => (
+          <span class="mq__item ticker__item">
+            <span class="ticker__name">{a.name}</span>
+            <span class="ticker__arrow" aria-hidden="true"><Arrow dir="e" /></span>
+            <span class="ticker__co">{a.company}</span>
+            <span class="ticker__lpa">{a.lpa} LPA</span>
+          </span>
+        ))}
+      </Marquee>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────── MANIFESTO ─────────────────────────── -->
+  <section class="mani section section--clear" data-theme="dark" data-stop="dust">
+    <div class="wrap mani__grid">
+      <div class="mani__label">
+        <span class="label"><span class="label__no">01</span> The premise</span>
+      </div>
+
+      <p class="mani__text" data-scrub-words>
+        If you can read and write in English, and you know how to add, subtract, multiply and divide — congratulations.
+        <em>You can become a software engineer.</em>
+      </p>
+
+      <div class="mani__aside">
+        <p class="body" data-reveal="up">
+          That is the entire entry requirement. Not a degree. Not a computer-science background. Not money in the bank.
+          Whatever your past may be — if you are willing to work hard to change your future, we have Brocamp for you.
+        </p>
+        <div data-reveal="up">
+          <Button href="/brocamp/" label="See how Brocamp works" variant="ghost" />
+        </div>
+      </div>
+    </div>
+
+    <div class="mani__from">
+      <div class="wrap mani__from-head">
+        <span class="mono dim">Our placed alumni started as</span>
+        <span class="mono dim">Source: brototype.com/alumni</span>
+      </div>
+      <Marquee speed={90} class="quals">
+        {qualifications.map((q) => (
+          <span class="mq__item quals__item"><span>{q}</span><i aria-hidden="true">→</i></span>
+        ))}
+      </Marquee>
+      <Marquee speed={70} dir={1} class="quals quals--b">
+        {['Software engineer', 'Full stack developer', 'Flutter developer', 'Data scientist', 'DevOps engineer', 'Backend developer', 'QA engineer', 'Lead developer'].map((q) => (
+          <span class="mq__item quals__item"><span>{q}</span><i aria-hidden="true">✦</i></span>
+        ))}
+      </Marquee>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────── NUMBERS ──────────────────────────── -->
+  <section class="nums section" data-theme="paper">
+    <div class="wrap">
+      <SectionHead no="02" label="The proof" meta="Figures as published by Brototype">
+        <Fragment slot="title">Talk is cheap.<br />Here are the <span class="serif accent">receipts.</span></Fragment>
+        <p class="body" data-reveal="up">
+          Six years. Five hubs. One stubborn idea: that the right environment can turn almost anyone into an engineer.
+          This is what that idea has produced so far.
+        </p>
+      </SectionHead>
+
+      <div class="nums__grid">
+        <article class="num num--hero card" data-reveal="up">
+          <header class="num__top mono"><span>01</span><span>Placements</span></header>
+          <p class="num__value"><span data-odo={inr(stats.placed)}>{inr(stats.placed)}</span></p>
+          <footer class="num__foot">
+            <h3 class="h4">Students placed</h3>
+            <p class="small">Across {inr(stats.companies)}+ companies — and still counting.</p>
+          </footer>
+          <figure class="dots" data-cursor="none">
+            <canvas data-dots data-count={stats.placed} data-share={stats.nonIt / 100} aria-hidden="true"></canvas>
+            <figcaption class="mono">
+              <span>One dot, one engineer</span>
+              <span><i class="dots__key dots__key--a"></i>Non-IT <i class="dots__key dots__key--b"></i>IT</span>
+            </figcaption>
+          </figure>
+        </article>
+
+        <article class="num card" data-reveal="up" data-tilt="4">
+          <header class="num__top mono"><span>02</span><span>Average</span></header>
+          <p class="num__value"><span class="num__unit">₹</span><span data-odo={inr(stats.avgMonthly)}>{inr(stats.avgMonthly)}</span></p>
+          <footer class="num__foot">
+            <h3 class="h4">Average salary, per month</h3>
+            <p class="small">That is {stats.avgLpa} LPA, averaged across every placed student.</p>
+          </footer>
+        </article>
+
+        <article class="num card" data-reveal="up" data-tilt="4">
+          <header class="num__top mono"><span>03</span><span>Ceiling</span></header>
+          <p class="num__value"><span data-odo={String(stats.highestLpa)}>{stats.highestLpa}</span><span class="num__unit num__unit--after">LPA</span></p>
+          <footer class="num__foot">
+            <h3 class="h4">Highest salary</h3>
+            <p class="small">Published packages range from {stats.lowestLpa} LPA to {stats.highestLpa} LPA.</p>
+          </footer>
+        </article>
+
+        <article class="num num--red card" data-theme="red" data-reveal="up" data-tilt="3">
+          <header class="num__top mono"><span>04</span><span>Combined</span></header>
+          <p class="num__value"><span class="num__unit">₹</span><span data-odo={String(stats.alumniIncomeCr)}>{stats.alumniIncomeCr}</span><span class="num__unit num__unit--after">Cr</span></p>
+          <footer class="num__foot">
+            <h3 class="h4">Earned by our alumni</h3>
+            <p class="small">The income generated by {inr(stats.placed)} alumni. Money that went home to families.</p>
+          </footer>
+        </article>
+
+        <article class="num num--bg card" data-reveal="up" data-bg>
+          <header class="num__top mono"><span>05</span><span>What’s your background?</span></header>
+
+          <div class="bg__switch" role="tablist" aria-label="Select your background">
+            <button class="bg__tab is-active" role="tab" aria-selected="true" data-bg-tab="non" data-cursor="link" type="button">I’m from a non-IT background</button>
+            <button class="bg__tab" role="tab" aria-selected="false" data-bg-tab="it" data-cursor="link" type="button">I’m from an IT background</button>
+          </div>
+
+          <div class="bg__read">
+            <p class="num__value bg__value">
+              <span data-bg-value>{stats.nonIt}</span><span class="num__unit num__unit--after">%</span>
+            </p>
+            <p class="bg__text" data-bg-text aria-live="polite">
+              About <strong>{inr(nonItCount)}</strong> of our placed students came from outside IT. Commerce, arts,
+              pharmacy, hotel management, architecture — they are engineers now.
+            </p>
+          </div>
+
+          <div class="bg__bar" data-bg-bar aria-hidden="true" data-non={stats.nonIt} data-it={stats.it}>
+            {Array.from({ length: 40 }).map(() => <i></i>)}
+          </div>
+
+          <template data-bg-copy="non">
+            About <strong>{inr(nonItCount)}</strong> of our placed students came from outside IT. Commerce, arts,
+            pharmacy, hotel management, architecture — they are engineers now.
+          </template>
+          <template data-bg-copy="it">
+            About <strong>{inr(itCount)}</strong> came from an IT background — and chose Brocamp to turn theory into
+            skills that employers actually pay for.
+          </template>
+        </article>
+
+        <article class="num card" data-reveal="up" data-tilt="4">
+          <header class="num__top mono"><span>06</span><span>Employers</span></header>
+          <p class="num__value"><span data-odo={inr(stats.companies)}>{inr(stats.companies)}</span><span class="num__unit num__unit--after">+</span></p>
+          <footer class="num__foot">
+            <h3 class="h4">Companies hiring</h3>
+            <p class="small">From early-stage startups to Infosys, Cognizant, Capgemini and Tata Elxsi.</p>
+          </footer>
+        </article>
+      </div>
+
+      <div class="nums__more" data-reveal="up">
+        <Button href="/placements/" label="See every placement" variant="light" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────────────── PAY AFTER PLACEMENT ────────────────────── -->
+  <section class="pap section section--clear" data-theme="dark" data-stop="rupee">
+    <div class="wrap pap__grid">
+      <header class="pap__head">
+        <span class="label"><span class="label__no">03</span> Pay After Placement</span>
+        <h2 class="h1 pap__title" data-reveal="lines">Learn now.<br />Pay when you <span class="serif accent">earn.</span></h2>
+      </header>
+
+      <div class="pap__body">
+        <p class="lead" data-reveal="up">
+          No tuition fee upfront. With Pay After Placement you pay for Brocamp only after you are placed and have
+          started earning — so the only thing you risk is effort.
+        </p>
+
+        <ol class="pap__steps">
+          <li class="pap__step" data-reveal="up">
+            <span class="mono accent">01</span>
+            <h3 class="h4">Learn</h3>
+            <p class="small">Twelve months of Brocamp. ₹0 tuition upfront.</p>
+          </li>
+          <li class="pap__step" data-reveal="up">
+            <span class="mono accent">02</span>
+            <h3 class="h4">Get placed</h3>
+            <p class="small">Land a job as a software engineer, with the placement team behind you.</p>
+          </li>
+          <li class="pap__step" data-reveal="up">
+            <span class="mono accent">03</span>
+            <h3 class="h4">Then pay</h3>
+            <p class="small">You start paying only once you are earning.</p>
+          </li>
+        </ol>
+
+        <div class="pap__guard" data-reveal="up">
+          <div class="stamp" aria-hidden="true" data-stamp>
+            <svg viewBox="0 0 200 200">
+              <defs><path id="stamp-path" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" /></defs>
+              <text><textPath href="#stamp-path" textLength="482" lengthAdjust="spacing">100% MONEY-BACK GUARANTEE ✦ NOT PLACED? MONEY BACK ✦</textPath></text>
+            </svg>
+            <b>100%</b>
+          </div>
+          <div>
+            <h3 class="h4">And if it does not work, you get it back.</h3>
+            <p class="small">
+              Complete the program within 12 months. If you are not placed within the following 12 months, Brocamp
+              refunds your investment in full.
+            </p>
+          </div>
+        </div>
+
+        <div class="pap__cta" data-reveal="up">
+          <Button href="/pay-after-placement/" label="Read how PAP works" />
+          <span class="mono dimmer">*Terms and conditions apply</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────── JOURNEY ──────────────────────────── -->
+  <section class="jour" data-theme="paper" data-journey>
+    <div class="jour__pin" data-journey-pin>
+      <header class="wrap jour__head">
+        <div class="jour__head-l">
+          <span class="label"><span class="label__no">04</span> The 12 months</span>
+          <h2 class="h2" data-reveal="lines">Six phases. <span class="serif accent">Zero</span> shortcuts.</h2>
+        </div>
+        <div class="jour__meter mono" aria-hidden="true">
+          <span>Month</span>
+          <b data-journey-month>00</b>
+          <span>/ 12</span>
+        </div>
+      </header>
+
+      <div class="jour__view">
+        <ol class="jour__track" data-journey-track>
+          {timeline.map((p) => (
+            <li class="phase" data-phase>
+              <div class="phase__top">
+                <span class="phase__no">{p.no}</span>
+                <span class="tag">{p.duration}</span>
+              </div>
+              <div class="term" aria-hidden="true" data-term data-lines={JSON.stringify(p.code)}>
+                <div class="term__bar"><i></i><i></i><i></i><span class="mono">phase_{p.no}</span></div>
+                <pre class="term__body"><code data-term-out></code><span class="term__caret"></span></pre>
+              </div>
+              <div class="phase__body">
+                <span class="mono accent">{p.verb}</span>
+                <h3 class="h3">{p.name}</h3>
+                <p class="body">{p.text}</p>
+              </div>
+              <p class="phase__out mono"><i aria-hidden="true"></i>{p.out}</p>
+            </li>
+          ))}
+          <li class="phase phase--end" data-phase data-theme="red">
+            <div class="phase__top">
+              <span class="phase__no">→</span>
+              <span class="tag">Month 12</span>
+            </div>
+            <div class="phase__big" aria-hidden="true">Placed.</div>
+            <div class="phase__body">
+              <span class="mono">Then</span>
+              <h3 class="h3">You get placed.</h3>
+              <p class="body">And with lifetime placement support, the team stays with you for the job after that, too.</p>
+            </div>
+            <Button href="/brocamp/" label="Explore the full program" variant="light" />
+          </li>
+        </ol>
+      </div>
+
+      <div class="wrap jour__ruler" aria-hidden="true">
+        <div class="ruler" data-journey-ruler>
+          {timeline.map((p) => (
+            <span class="ruler__seg" style={`--from:${p.from / 12};--len:${p.months / 12}`} data-ruler-seg>
+              <em class="mono">{p.name}</em>
+            </span>
+          ))}
+          <span class="ruler__seg ruler__seg--end" style={`--from:${acc / 12};--len:${(12 - acc) / 12}`} data-ruler-seg>
+            <em class="mono">Placed</em>
+          </span>
+          <i class="ruler__fill" data-journey-fill></i>
+          <i class="ruler__dot" data-journey-dot></i>
+        </div>
+        <div class="ruler__ticks mono">
+          {Array.from({ length: 13 }).map((_, i) => <span>{String(i).padStart(2, '0')}</span>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────────────────── DOMAINS ──────────────────────────── -->
+  <section class="dom section" data-theme="dark">
+    <div class="wrap">
+      <SectionHead no="05" label="Domains" meta={`${stats.domains} domains · ${stats.modules} modules each`}>
+        <Fragment slot="title">Choose what<br />you will <span class="serif accent">build.</span></Fragment>
+        <p class="body" data-reveal="up">
+          Every domain runs the full twelve months, in-house or online, and every one of them is AI-integrated — because
+          in the AI era, coding alone is not enough.
+        </p>
+      </SectionHead>
+
+      <ul class="dom__list" data-domains>
+        {courses.map((c) => (
+          <li class="dom__item" data-reveal="up">
+            <a class="dom__row" href={`/courses/#${c.id}`} data-cursor="view" data-domain data-glyph={c.glyph} data-line={c.line} data-family={c.family}>
+              <span class="dom__no mono">{c.no}</span>
+              <span class="dom__name">{c.name}</span>
+              <span class="dom__stacks mono">
+                {c.isNew && <span class="tag tag--ai">New</span>}
+                {(c.stacks.length ? c.stacks : ['AI integrated']).slice(0, 4).join(' · ')}
+              </span>
+              <span class="dom__arrow" aria-hidden="true"><Arrow /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="dom__more" data-reveal="up">
+        <Button href="/courses/" label="Compare all 12 domains" variant="ghost" />
+      </div>
+    </div>
+
+    <div class="peek" data-domain-peek aria-hidden="true">
+      <div class="peek__card">
+        <span class="peek__family mono" data-peek-family>Build</span>
+        <span class="peek__glyph" data-peek-glyph>&lt;/&gt;</span>
+        <p class="peek__line" data-peek-line></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────── PRINCIPLES ────────────────────────── -->
+  <section class="prin" data-theme="dark" data-principles>
+    <div class="wrap prin__head">
+      <span class="label"><span class="label__no">06</span> How we do it</span>
+      <h2 class="h2" data-reveal="lines">Three rules of <span class="serif accent">the camp.</span></h2>
+    </div>
+
+    <div class="prin__stack">
+      {principles.map((p, i) => (
+        <article class="rule-card" data-rule-card data-theme={['paper', 'red', 'dark'][i]} style={`--i:${i}`}>
+          <div class="wrap rule-card__inner">
+            <header class="rule-card__top mono">
+              <span>Rule {p.no}</span>
+              <span>{['Team', 'Teach', 'Explore'][i]}</span>
+            </header>
+            <h3 class="rule-card__title">{p.title}</h3>
+            <div class="rule-card__foot">
+              <p class="lead">{p.text}</p>
+              <span class="rule-card__no" aria-hidden="true">{p.no}</span>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- ───────────────────────────── WORLD ───────────────────────────── -->
+  <section class="world section--clear" data-theme="dark" data-stop="world">
+    <div class="wrap world__inner">
+      <div class="world__copy">
+        <span class="label"><span class="label__no">07</span> Where they went</span>
+        <h2 class="h1 world__title" data-reveal="lines">From Kochi.<br />To <span class="serif accent">everywhere.</span></h2>
+        <p class="lead" data-reveal="up">
+          Bengaluru, Dubai, Dublin, Melbourne, Menlo Park — even Gilching, a small town outside Munich. Brocamp alumni
+          now write code in more than a hundred places, and a good number of them do it from home.
+        </p>
+        <div data-reveal="up">
+          <Button href="/placements/" label="Explore placements" />
+        </div>
+      </div>
+    </div>
+
+    <Marquee speed={80} class="places">
+      {placeNames.map((p) => (
+        <span class="mq__item places__item"><span>{p}</span><i aria-hidden="true"></i></span>
+      ))}
+    </Marquee>
+  </section>
+
+  <!-- ───────────────────────────── ALUMNI ──────────────────────────── -->
+  <section class="alum section" data-theme="dark">
+    <div class="wrap">
+      <SectionHead no="08" label="Alumni" meta="Drag to explore">
+        <Fragment slot="title">People just<br />like <span class="serif accent">you.</span></Fragment>
+        <p class="body" data-reveal="up">
+          Not prodigies. Not toppers. People who decided their past was not going to be the whole story — and then did
+          the work.
+        </p>
+      </SectionHead>
+    </div>
+
+    <div class="rail" data-rail data-cursor="drag">
+      <ul class="rail__track" data-rail-track>
+        {rail.map((a, i) => (
+          <li class="person card" data-person>
+            <header class="person__top">
+              <span class="person__mono" aria-hidden="true">{initials(a.name)}</span>
+              <span class="mono dimmer">{String(i + 1).padStart(2, '0')}</span>
+            </header>
+            <p class="person__lpa"><b>{a.lpa}</b><span class="mono">LPA · {a.kind === 'current' ? 'current' : 'placed'}</span></p>
+            <footer class="person__foot">
+              <h3 class="h4">{a.name}</h3>
+              <p class="small">{a.company}</p>
+              <span class="tag">{a.stack}</span>
+            </footer>
+          </li>
+        ))}
+        <li class="person person--more" data-person>
+          <a href="/placements/" data-cursor="view">
+            <span class="mono">+ {inr(stats.placed - rail.length)} more</span>
+            <span class="h3">See all placements</span>
+            <span class="orb"><Arrow /></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="wrap stories">
+      <header class="stories__head">
+        <h3 class="h3" data-reveal="lines">Hear it from them.</h3>
+        <p class="mono dim">Transformation stories · video</p>
+      </header>
+
+      <ul class="stories__grid">
+        {stories.map((s, i) => (
+          <li data-reveal="up">
+            <button class="story" type="button" data-video={s.id} data-video-title={s.title} data-cursor="play">
+              <span class="story__media">
+                <img src={`https://i.ytimg.com/vi/${s.id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" width="480" height="360" />
+                <span class="story__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor" /></svg></span>
+              </span>
+              <span class="story__meta mono"><span>{String(i + 1).padStart(2, '0')}</span><span>Watch</span></span>
+              <span class="story__from">{s.from}</span>
+              <span class="story__to"><Arrow dir="e" />{s.to}</span>
+              <span class="sr-only">Play video: {s.title}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ────────────────────────────── HUBS ───────────────────────────── -->
+  <section class="hubs section" data-theme="paper" data-hubs>
+    <div class="wrap">
+      <SectionHead no="09" label="Hubs" meta="5 cities · or fully remote">
+        <Fragment slot="title">Walk in.<br />Or <span class="serif accent">log in.</span></Fragment>
+        <p class="body" data-reveal="up">
+          Brocamp runs in-house at five hubs across Kerala, Karnataka and Tamil Nadu — and online for everyone else.
+          Same program, same reviews, same standard.
+        </p>
+      </SectionHead>
+
+      <div class="hubs__grid">
+        <ul class="hubs__list">
+          {map.map((h, i) => (
+            <li class="hub" data-hub={i} data-reveal="up">
+              <a class="hub__row" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Brototype ${h.city}`)}`} target="_blank" rel="noopener" data-cursor="open" data-cursor-text="Map">
+                <span class="hub__code mono">{h.code}</span>
+                <span class="hub__city">{h.city}</span>
+                <span class="hub__tag mono">{h.tag}</span>
+                <span class="hub__addr">{h.address}</span>
+              </a>
+            </li>
+          ))}
+          <li class="hub hub--remote" data-reveal="up">
+            <div class="hub__row">
+              <span class="hub__code mono">WWW</span>
+              <span class="hub__city">Online</span>
+              <span class="hub__tag mono">Remote</span>
+              <span class="hub__addr">Wherever you and your laptop are.</span>
+            </div>
+          </li>
+        </ul>
+
+        <figure class="atlas" data-reveal="scale" aria-label="Relative positions of the five Brototype hubs">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" data-atlas>
+            <g class="atlas__grid">
+              {Array.from({ length: 11 }).map((_, i) => <line x1={i * 10} y1="0" x2={i * 10} y2="100" />)}
+              {Array.from({ length: 11 }).map((_, i) => <line x1="0" y1={i * 10} x2="100" y2={i * 10} />)}
+            </g>
+            <g class="atlas__links">
+              {map.slice(1).map((h) => <line x1={map[0].px} y1={map[0].py} x2={h.px} y2={h.py} data-atlas-link />)}
+            </g>
+            {map.map((h, i) => (
+              <g class="atlas__node" data-atlas-node={i} transform={`translate(${h.px} ${h.py})`}>
+                <circle class="atlas__pulse" r="5" />
+                <circle class="atlas__dot" r={i === 0 ? 1.7 : 1.2} />
+                <text x="3.2" y="1.1">{h.code}</text>
+              </g>
+            ))}
+          </svg>
+          <figcaption class="mono">
+            <span>N ↑</span>
+            <span>{map[0].lat.toFixed(2)}° N · {map[0].lon.toFixed(2)}° E</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────────── FOUNDER ─────────────────────────── -->
+  <section class="note section" data-theme="dark">
+    <div class="wrap note__grid">
+      <div class="note__label">
+        <span class="label"><span class="label__no">10</span> A direct line</span>
+      </div>
+      <blockquote class="note__quote">
+        <p data-reveal="lines">
+          Got a concern, a question, or feedback we need to hear? <span class="serif accent">Skip the queue.</span> Write
+          straight to the founder.
+        </p>
+      </blockquote>
+      <div class="note__foot" data-reveal="up">
+        <div>
+          <p class="h4">Nikhil Kilivayil</p>
+          <p class="mono dim">Founder &amp; CEO, Brototype</p>
+        </div>
+        <a class="note__mail" href={`mailto:${contacts.ceo.email}`} data-copy={contacts.ceo.email} data-copy-done="Email copied" data-cursor="copy">
+          <span>{contacts.ceo.email}</span>
+          <span class="orb" aria-hidden="true"><Arrow /></span>
+        </a>
+        <p class="small">He reads this inbox personally, and replies to as many as time allows.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────── CTA ───────────────────────────── -->
+  <section class="join section" data-theme="red" id="apply">
+    <div class="wrap join__grid">
+      <header class="join__head">
+        <span class="label label--plain"><span class="dot" style="background:#fff"></span> Your turn</span>
+        <h2 class="display join__title" data-reveal="chars">Ready,<br />bro?</h2>
+        <p class="lead" data-reveal="up">
+          Tell us who you are. A career expert will take it from there — and tell you honestly whether Brocamp is right
+          for you.
+        </p>
+      </header>
+
+      <div class="join__form" data-reveal="up">
+        <ApplyForm id="home-apply" />
+      </div>
+    </div>
+  </section>
+</Base>
